@@ -49,7 +49,8 @@ export default function Signup() {
       setFormErrors(data.errors);
       // dispatch({ type: "SET_ERRORS", payload: data.errors });
     }
-    if (data.data) {
+    console.log(data);
+    if (data) {
       // dispatch({ type: "SET_CURRENT_USER", payload: data.data.currentUser });
       router.push("/");
     }
