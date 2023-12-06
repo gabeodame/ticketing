@@ -9,20 +9,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { buildClient } from "@/api/build-client";
 import { State, UserData } from "../util/types";
-
-const createUserSchema = z.object({
-  email: z.string().email({
-    message: "You must enter a valid email address.",
-  }),
-  password: z
-    .string()
-    .min(4, {
-      message: "Your password must be between 4 and 20 characters.",
-    })
-    .max(20, {
-      message: "Your password must be between 4 and 20 characters.",
-    }),
-});
+import { createUserSchema } from "../lib/schema";
 
 export async function signIn(prevState: State, formData: FormData) {
   const session = cookies().get("session")?.value;
@@ -74,13 +61,8 @@ export async function signIn(prevState: State, formData: FormData) {
     };
   }
 }
+
 export async function addUser(prevState: State, formData: FormData) {
-  const session = cookies().get("session")?.value;
-  const headers = {
-    // "Content-Type": "application/json",
-    Host: "ticketing.dev",
-    Cookie: `session=${session}`,
-  };
   try {
     const validatedValues = createUserSchema.safeParse({
       email: formData.get("email"),
@@ -90,18 +72,31 @@ export async function addUser(prevState: State, formData: FormData) {
     if (!validatedValues.success) {
       return {
         ...prevState,
+        status: 400,
         errors: validatedValues.error.flatten().fieldErrors,
-        message: "Please fix the errors below. Failed to create invoice.",
+        message: "Please fix the errors below. Failed to add user.",
+        userData: null,
       };
     }
 
     //fetch data
     const passedInfo = validatedValues.data;
 
-    const client = buildClient({ headers });
-    const { data } = await client.post("/api/users/signup", passedInfo);
-    console.log("data from buildclient", data);
-    return data;
+    return {
+      ...prevState,
+      errors: null,
+      status: 200,
+      message: "You have successfully created an invoice.",
+      userData: passedInfo,
+    };
+
+    // const client = buildClient({ headers });
+    // const res = await client.post("/api/users/signup", passedInfo, {
+    //   withCredentials: true,
+    // });
+
+    // revalidatePath("/");
+    // return res.data;
     // console.log(JSON.stringify(data));
     // let response;
     // console.log(passedInfo);
@@ -152,4 +147,41 @@ export async function getCurrentUser() {
   console.log("data from buildclient currentUser", data);
   revalidatePath("/");
   return data;
+}
+
+type Inputs = z.infer<typeof createUserSchema>;
+
+export async function addUserAction(formData: Inputs) {
+  const session = cookies().get("session")?.value;
+  const headers = {
+    // "Content-Type": "application/json",
+    Host: "ticketing.dev",
+    Cookie: `session=${session}`,
+  };
+
+  const validatedValues = createUserSchema.safeParse({
+    email: formData.email,
+    password: formData.password,
+  });
+
+  if (!validatedValues.success) {
+    return {
+      status: 400,
+      errors: validatedValues.error.flatten().fieldErrors,
+      //  message: "Please fix the errors below. Failed to add user.",
+      userData: null,
+    };
+  }
+
+  //fetch data
+  const passedInfo = validatedValues.data;
+
+  const dataObj = {
+    errors: null,
+    status: 200,
+    //  message: "You have successfully created an invoice.",
+    userData: passedInfo,
+  };
+
+  return dataObj;
 }

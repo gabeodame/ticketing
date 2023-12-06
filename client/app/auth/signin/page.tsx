@@ -8,7 +8,7 @@ type formValues = {
 };
 
 function SignInPage() {
-  return <UserForm action={signIn} />;
+  return <UserForm state="signin" />;
 }
 
 export default SignInPage;

@@ -1,6 +1,7 @@
 export type UserData = {
   email: string;
-  id: string;
+  id?: string;
+  password?: string;
 };
 
 export type State = {
@@ -10,5 +11,10 @@ export type State = {
   };
   message?: string | null;
   staus?: number;
-  currentUser?: UserData | null;
+  UserData?: UserData | null;
+};
+
+export type LinkConfig = {
+  label: string;
+  href: string;
 };

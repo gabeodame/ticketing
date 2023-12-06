@@ -1,3 +1,5 @@
+import { revalidatePath } from "next/cache";
+
 type RequestMethod = "get" | "post" | "put" | "delete";
 
 export default function fetchData<T = any>(
@@ -41,7 +43,8 @@ export default function fetchData<T = any>(
       if (onSuccess) {
         onSuccess(data);
       }
-      console.log(data);
+      revalidatePath("/");
+      // console.log(data);
       return { data: data, errors: null };
     } catch (error: any) {
       console.log(error);

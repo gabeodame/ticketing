@@ -23,8 +23,8 @@ export default function useRequest<T = any>(
       }
       return response.data;
     } catch (error: any) {
-      console.log(error.response.data.errors);
-      const newErrors = error.response.data.errors.reduce(
+      console.log(error.response?.data.errors);
+      const newErrors = error.response?.data.errors.reduce(
         (
           acc: { [x: string]: any },
           err: { field: string | number; message: any }
