@@ -1,5 +1,5 @@
 import request from "supertest";
-import { app } from "../../app";
+import { app } from "../../../../tickets/src/app";
 
 it("responds with details about the current user", async () => {
   const cookie = await global.signin(); //in test/setup.ts this could alternatively be extracted into helper function and imported in to modules for use.

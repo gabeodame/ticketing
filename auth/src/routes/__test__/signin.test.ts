@@ -1,5 +1,5 @@
 import request from "supertest";
-import { app } from "../../app";
+import { app } from "../../../../tickets/src/app";
 
 it("Disallows sign in with non existing email", () => {
   return request(app)

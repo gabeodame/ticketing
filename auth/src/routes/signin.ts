@@ -4,8 +4,8 @@ import jwt from "jsonwebtoken";
 
 import { PasswordManager } from "../services/password-manager";
 import { User } from "../models/user";
-import { validateRequest } from "../middlewares/validate-request";
-import { BadRequestError } from "../errors/bad-request-errors";
+import { validateRequest } from "@gogittix/common";
+import { BadRequestError } from "@gogittix/common";
 
 const router = express.Router();
 
@@ -31,6 +31,7 @@ router.post(
       existingUser.password,
       password
     );
+
     if (!passwordsMatch) {
       throw new BadRequestError("Invalid Credentials");
     }
